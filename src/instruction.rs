@@ -214,7 +214,7 @@ pub enum Name {
     LoadSpriteLocation,
     StoreBCD,
     StoreRegisters,
-    LoadIntoRegisters
+    LoadIntoRegisters,
 }
 
 #[derive(Debug, PartialEq)]
