@@ -36,6 +36,16 @@ lazy_static! {
             masks: Some(vec![0x0F00, 0x00F0]),
         },
         Op {
+            name: Name::LoadAbsolute,
+            code: 0x6FFF,
+            masks: Some(vec![0x0F00, 0x00FF]),
+        },
+        Op {
+            name: Name::AddAbsolute,
+            code: 0x7FFF,
+            masks: Some(vec![0x0F00, 0x00FF]),
+        },
+        Op {
             name: Name::Move,
             code: 0x8FF0,
             masks: Some(vec![0x0F00, 0x00F0]),
@@ -91,6 +101,16 @@ lazy_static! {
             masks: Some(vec![0x0FFF]),
         },
         Op {
+            name: Name::JumpOffset,
+            code: 0xBFFF,
+            masks: Some(vec![0x0FFF]),
+        },
+        Op {
+            name: Name::Random,
+            code: 0xCFFF,
+            masks: Some(vec![0x0F00, 0x00FF]),
+        },
+        Op {
             name: Name::Sprite,
             code: 0xDFFF,
             masks: Some(vec![0x0F00, 0x00F0, 0x000F])
@@ -113,6 +133,41 @@ lazy_static! {
         Op {
             name: Name::WaitKey,
             code: 0xFF0A,
+            masks: Some(vec![0x0F00])
+        },
+        Op {
+            name: Name::SetDelayTimer,
+            code: 0xFF15,
+            masks: Some(vec![0x0F00])
+        },
+        Op {
+            name: Name::SetSoundTimer,
+            code: 0xFF18,
+            masks: Some(vec![0x0F00])
+        },
+        Op {
+            name: Name::AddToInstructionPointer,
+            code: 0xFF1E,
+            masks: Some(vec![0x0F00])
+        },
+        Op {
+            name: Name::LoadSpriteLocation,
+            code: 0xFF29,
+            masks: Some(vec![0x0F00])
+        },
+        Op {
+            name: Name::StoreBCD,
+            code: 0xFF33,
+            masks: Some(vec![0x0F00])
+        },
+        Op {
+            name: Name::StoreRegisters,
+            code: 0xFF55,
+            masks: Some(vec![0x0F00])
+        },
+        Op {
+            name: Name::LoadIntoRegisters,
+            code: 0xFF65,
             masks: Some(vec![0x0F00])
         }
     ];
@@ -150,6 +205,16 @@ pub enum Name {
     MoveBCD,
     MoveM,
     MoveMReverse,
+    LoadAbsolute,
+    JumpOffset,
+    Random,
+    SetDelayTimer,
+    SetSoundTimer,
+    AddToInstructionPointer,
+    LoadSpriteLocation,
+    StoreBCD,
+    StoreRegisters,
+    LoadIntoRegisters
 }
 
 #[derive(Debug, PartialEq)]

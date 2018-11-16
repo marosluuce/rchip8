@@ -82,14 +82,25 @@ mod tests {
     }
 
     #[test]
-    fn decodes_skip_not_equal() {
+    fn decodes_load_absolute() {
         assert_eq!(
-            Instruction::new(0x93B0),
+            Instruction::new(0x6A23),
             Instruction {
-                name: Name::SkipNotEqual,
-                args: Some(vec![0x300, 0xB0])
+                name: Name::LoadAbsolute,
+                args: Some(vec![0xA00, 0x23])
             }
         );
+    }
+
+    #[test]
+    fn decodes_add_absolute() {
+        assert_eq!(
+            Instruction::new(0x7145),
+            Instruction {
+                name: Name::AddAbsolute,
+                args: Some(vec![0x100, 0x45])
+            }
+        )
     }
 
     #[test]
@@ -192,12 +203,45 @@ mod tests {
     }
 
     #[test]
+    fn decodes_skip_not_equal() {
+        assert_eq!(
+            Instruction::new(0x93B0),
+            Instruction {
+                name: Name::SkipNotEqual,
+                args: Some(vec![0x300, 0xB0])
+            }
+        );
+    }
+
+    #[test]
     fn decodes_set_i() {
         assert_eq!(
             Instruction::new(0xAAAB),
             Instruction {
                 name: Name::SetI,
                 args: Some(vec![0xAAB])
+            }
+        );
+    }
+
+    #[test]
+    fn decodes_jump_offset() {
+        assert_eq!(
+            Instruction::new(0xBAAB),
+            Instruction {
+                name: Name::JumpOffset,
+                args: Some(vec![0xAAB])
+            }
+        );
+    }
+
+    #[test]
+    fn decodes_rand() {
+        assert_eq!(
+            Instruction::new(0xCB97),
+            Instruction {
+                name: Name::Random,
+                args: Some(vec![0xB00, 0x97])
             }
         );
     }
@@ -252,6 +296,83 @@ mod tests {
             Instruction::new(0xF10A),
             Instruction {
                 name: Name::WaitKey,
+                args: Some(vec![0x100])
+            }
+        )
+    }
+
+    #[test]
+    fn decodes_set_delay_timer() {
+        assert_eq!(
+            Instruction::new(0xF115),
+            Instruction {
+                name: Name::SetDelayTimer,
+                args: Some(vec![0x100])
+            }
+        )
+    }
+
+    #[test]
+    fn decodes_set_sound_timer() {
+        assert_eq!(
+            Instruction::new(0xF218),
+            Instruction {
+                name: Name::SetSoundTimer,
+                args: Some(vec![0x200])
+            }
+        )
+    }
+
+    #[test]
+    fn decodes_add_to_instruction_point() {
+        assert_eq!(
+            Instruction::new(0xF31E),
+            Instruction {
+                name: Name::AddToInstructionPointer,
+                args: Some(vec![0x300])
+            }
+        )
+    }
+
+    #[test]
+    fn decodes_load_sprite_location() {
+        assert_eq!(
+            Instruction::new(0xF429),
+            Instruction {
+                name: Name::LoadSpriteLocation,
+                args: Some(vec![0x400])
+            }
+        )
+    }
+
+    #[test]
+    fn decodes_store_bcd() {
+        assert_eq!(
+            Instruction::new(0xF233),
+            Instruction {
+                name: Name::StoreBCD,
+                args: Some(vec![0x200])
+            }
+        )
+    }
+
+    #[test]
+    fn decodes_store_registers() {
+        assert_eq!(
+            Instruction::new(0xF555),
+            Instruction {
+                name: Name::StoreRegisters,
+                args: Some(vec![0x500])
+            }
+        )
+    }
+
+    #[test]
+    fn decodes_load_into_registers() {
+        assert_eq!(
+            Instruction::new(0xF165),
+            Instruction {
+                name: Name::LoadIntoRegisters,
                 args: Some(vec![0x100])
             }
         )
