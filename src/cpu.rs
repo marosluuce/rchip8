@@ -3,6 +3,7 @@ use instruction::{Instruction, Name};
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Cpu {
     pub registers: [u8; 16],
+    pub stack: [u16; 16],
     pub i: u16,
     pub pc: u16,
     pub sp: u8,
@@ -14,6 +15,7 @@ impl Cpu {
     pub fn new() -> Cpu {
         Cpu {
             registers: [0; 16],
+            stack: [0; 16],
             i: 0,
             pc: 0,
             sp: 0,
@@ -28,23 +30,26 @@ impl Cpu {
                 name: Name::SetI,
                 args: Some(args),
                 ..
-            } => {
-                Cpu { i: args[0], ..*self}
-            }
+            } => Cpu {
+                i: args[0],
+                ..*self
+            },
             Instruction {
                 name: Name::JumpAbsolute,
                 args: Some(args),
                 ..
-            } => {
-                Cpu { pc: args[0], ..*self}
-            }
+            } => Cpu {
+                pc: args[0],
+                ..*self
+            },
             Instruction {
                 name: Name::SkipEqualAbsolute,
                 args: Some(_args),
                 ..
-            } => {
-                Cpu { pc: self.pc + 2, ..*self}
-            }
+            } => Cpu {
+                pc: self.pc + 2,
+                ..*self
+            },
             _ => panic!("Unknown instruction"),
         }
     }
