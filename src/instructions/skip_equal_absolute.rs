@@ -14,16 +14,22 @@ impl Op for SkipEqualsAbsolute {
 impl Instruction for SkipEqualsAbsolute {
     fn new(opcode: u16) -> SkipEqualsAbsolute {
         SkipEqualsAbsolute {
-            register: (opcode & 0x0F00 >> 4) as usize,
+            register: ((opcode & 0x0F00) >> 8) as usize,
             value: (opcode & 0x00FF) as u8,
         }
     }
 
     fn execute(&self, cpu: Cpu) -> Cpu {
         if cpu.registers[self.register] == self.value {
-            Cpu { pc: cpu.pc + 2, ..cpu }
+            Cpu {
+                pc: cpu.pc + 2,
+                ..cpu
+            }
         } else {
-            Cpu { pc: cpu.pc + 1, ..cpu }
+            Cpu {
+                pc: cpu.pc + 1,
+                ..cpu
+            }
         }
     }
 }
@@ -34,14 +40,16 @@ mod tests {
 
     #[test]
     fn executes_skip_when_register_equals_value() {
+        let instruction = SkipEqualsAbsolute::new(0x3204);
         let cpu = Cpu {
             pc: 4,
-            registers: [4; 16],
+            registers: {
+                let mut registers = [0; 16];
+                registers[2] = 0x04;
+                registers
+            },
             ..Cpu::new()
         };
-        let instruction = SkipEqualsAbsolute::new(0x3204);
-
-        let updated = instruction.execute(cpu);
 
         assert_eq!(
             Cpu {
@@ -49,20 +57,18 @@ mod tests {
                 sp: 0,
                 ..cpu
             },
-            updated
+            instruction.execute(cpu)
         );
     }
 
     #[test]
     fn executes_does_not_skip() {
+        let instruction = SkipEqualsAbsolute::new(0x3205);
         let cpu = Cpu {
             pc: 4,
             ..Cpu::new()
         };
-        let instruction = SkipEqualsAbsolute::new(0x3205);
 
-        let updated = instruction.execute(cpu);
-
-        assert_eq!(Cpu { pc: 5, ..cpu }, updated);
+        assert_eq!(Cpu { pc: 5, ..cpu }, instruction.execute(cpu));
     }
 }

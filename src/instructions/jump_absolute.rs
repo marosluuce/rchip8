@@ -31,11 +31,9 @@ mod tests {
 
     #[test]
     fn executes_jump_absolute() {
-        let cpu = Cpu::new();
         let instruction = JumpAbsolute::new(0x1123);
+        let cpu = Cpu::new();
 
-        let updated = instruction.execute(cpu);
-
-        assert_eq!(Cpu { pc: 0x123, ..cpu }, updated);
+        assert_eq!(Cpu { pc: 0x123, ..cpu }, instruction.execute(cpu));
     }
 }
