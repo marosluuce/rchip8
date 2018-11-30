@@ -7,8 +7,8 @@ pub struct Cpu {
     pub i: u16,
     pub pc: u16,
     pub sp: u8,
-    pub delay_timer: u16,
-    pub sound_timer: u16,
+    pub delay_timer: u8,
+    pub sound_timer: u8,
 }
 
 impl Cpu {

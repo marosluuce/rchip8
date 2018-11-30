@@ -2,17 +2,17 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use instructions::op::Op;
 
-struct WaitKey {
+struct SkipKeyPressed {
     register: usize,
 }
 
-impl Op for WaitKey {
-    const MASK: u16 = 0xFF0A;
+impl Op for SkipKeyPressed {
+    const MASK: u16 = 0xEF9E;
 }
 
-impl Instruction for WaitKey {
-    fn new(opcode: u16) -> WaitKey {
-        WaitKey {
+impl Instruction for SkipKeyPressed {
+    fn new(opcode: u16) -> SkipKeyPressed {
+        SkipKeyPressed {
             register: ((opcode & 0x0F00) >> 8) as usize,
         }
     }
@@ -27,5 +27,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn reads_a_key_press_into_register() {}
+    fn skips_when_key_pressed() {}
+
+    #[test]
+    fn does_not_skip_when_key_unpressed() {}
 }
