@@ -1,16 +1,14 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct SetI {
     address: u16,
 }
 
-impl Op for SetI {
-    const MASK: u16 = 0xAFFF;
-}
-
 impl Instruction for SetI {
+    const MASK: u16 = 0xAFFF;
+
     fn new(opcode: u16) -> SetI {
         SetI {
             address: opcode & 0x0FFF,
@@ -23,6 +21,12 @@ impl Instruction for SetI {
             i: self.address,
             ..cpu
         }
+    }
+}
+
+impl fmt::Display for SetI {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "LD I, {:X}", self.address)
     }
 }
 

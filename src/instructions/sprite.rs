@@ -1,6 +1,6 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct Sprite {
     register1: usize,
@@ -8,11 +8,9 @@ struct Sprite {
     nibble: u8,
 }
 
-impl Op for Sprite {
-    const MASK: u16 = 0xDFFF;
-}
-
 impl Instruction for Sprite {
+    const MASK: u16 = 0xDFFF;
+
     fn new(opcode: u16) -> Sprite {
         Sprite {
             register1: ((opcode & 0x0F00) >> 8) as usize,
@@ -23,6 +21,16 @@ impl Instruction for Sprite {
 
     fn execute(&self, cpu: Cpu) -> Cpu {
         cpu
+    }
+}
+
+impl fmt::Display for Sprite {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "DRW V{:X}, V{:X}, {:X}",
+            self.register1, self.register2, self.nibble
+        )
     }
 }
 

@@ -1,17 +1,15 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct LoadRegister {
     register1: usize,
     register2: usize,
 }
 
-impl Op for LoadRegister {
-    const MASK: u16 = 0x8FF0;
-}
-
 impl Instruction for LoadRegister {
+    const MASK: u16 = 0x8FF0;
+
     fn new(opcode: u16) -> LoadRegister {
         LoadRegister {
             register1: ((opcode & 0x0F00) >> 8) as usize,
@@ -29,6 +27,12 @@ impl Instruction for LoadRegister {
             },
             ..cpu
         }
+    }
+}
+
+impl fmt::Display for LoadRegister {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "LD V{:X}, V{:X}", self.register1, self.register2)
     }
 }
 

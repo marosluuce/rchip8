@@ -3,7 +3,7 @@ use self::rand::{thread_rng, Rng};
 
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct Random {
     register: usize,
@@ -11,11 +11,15 @@ struct Random {
     fixed_value: Option<u16>,
 }
 
-impl Op for Random {
-    const MASK: u16 = 0xCFFF;
+impl Random {
+    fn get_value(&self) -> u8 {
+        (self.fixed_value.unwrap_or(get_random(0, 255)) & self.value) as u8
+    }
 }
 
 impl Instruction for Random {
+    const MASK: u16 = 0xCFFF;
+
     fn new(opcode: u16) -> Random {
         Random {
             register: ((opcode & 0x0F00) >> 8) as usize,
@@ -29,12 +33,17 @@ impl Instruction for Random {
             pc: cpu.pc + 1,
             registers: {
                 let mut registers = cpu.registers;
-                registers[self.register] =
-                    (self.fixed_value.unwrap_or(get_random(0, 255)) & self.value) as u8;
+                registers[self.register] = self.get_value();
                 registers
             },
             ..cpu
         }
+    }
+}
+
+impl fmt::Display for Random {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "RND V{:X}, {:X}", self.register, self.get_value())
     }
 }
 

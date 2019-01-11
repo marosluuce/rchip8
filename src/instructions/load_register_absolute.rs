@@ -1,17 +1,15 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct LoadRegisterAbsolute {
     register: usize,
     value: u8,
 }
 
-impl Op for LoadRegisterAbsolute {
-    const MASK: u16 = 0x6FFF;
-}
-
 impl Instruction for LoadRegisterAbsolute {
+    const MASK: u16 = 0x6FFF;
+
     fn new(opcode: u16) -> LoadRegisterAbsolute {
         LoadRegisterAbsolute {
             register: ((opcode & 0x0F00) >> 8) as usize,
@@ -29,6 +27,12 @@ impl Instruction for LoadRegisterAbsolute {
             pc: cpu.pc + 2,
             ..cpu
         }
+    }
+}
+
+impl fmt::Display for LoadRegisterAbsolute {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "LD V{:X}, {:X}", self.register, self.value)
     }
 }
 

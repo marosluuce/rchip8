@@ -1,17 +1,15 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct AddAbsolute {
     register: usize,
     value: u8,
 }
 
-impl Op for AddAbsolute {
-    const MASK: u16 = 0x7FFF;
-}
-
 impl Instruction for AddAbsolute {
+    const MASK: u16 = 0x7FFF;
+
     fn new(opcode: u16) -> AddAbsolute {
         AddAbsolute {
             register: ((opcode & 0x0F00) >> 8) as usize,
@@ -29,6 +27,12 @@ impl Instruction for AddAbsolute {
             },
             ..cpu
         }
+    }
+}
+
+impl fmt::Display for AddAbsolute {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "ADD V{:X}, {:X}", self.register, self.value)
     }
 }
 

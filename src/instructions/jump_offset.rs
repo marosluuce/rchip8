@@ -1,16 +1,14 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct JumpOffset {
     address: u16,
 }
 
-impl Op for JumpOffset {
-    const MASK: u16 = 0xBFFF;
-}
-
 impl Instruction for JumpOffset {
+    const MASK: u16 = 0xBFFF;
+
     fn new(opcode: u16) -> JumpOffset {
         JumpOffset {
             address: opcode & 0x0FFF,
@@ -22,6 +20,12 @@ impl Instruction for JumpOffset {
             pc: cpu.registers[0] as u16 + self.address,
             ..cpu
         }
+    }
+}
+
+impl fmt::Display for JumpOffset {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "JP V0, {:X}", self.address)
     }
 }
 

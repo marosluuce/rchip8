@@ -1,16 +1,14 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct SkipKeyPressed {
     register: usize,
 }
 
-impl Op for SkipKeyPressed {
-    const MASK: u16 = 0xEF9E;
-}
-
 impl Instruction for SkipKeyPressed {
+    const MASK: u16 = 0xEF9E;
+
     fn new(opcode: u16) -> SkipKeyPressed {
         SkipKeyPressed {
             register: ((opcode & 0x0F00) >> 8) as usize,
@@ -19,6 +17,12 @@ impl Instruction for SkipKeyPressed {
 
     fn execute(&self, cpu: Cpu) -> Cpu {
         cpu
+    }
+}
+
+impl fmt::Display for SkipKeyPressed {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "SKP V{:X}", self.register)
     }
 }
 

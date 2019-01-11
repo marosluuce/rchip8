@@ -1,17 +1,15 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct SkipNotEqual {
     register1: usize,
     register2: usize,
 }
 
-impl Op for SkipNotEqual {
-    const MASK: u16 = 0x9FF0;
-}
-
 impl Instruction for SkipNotEqual {
+    const MASK: u16 = 0x9FF0;
+
     fn new(opcode: u16) -> SkipNotEqual {
         SkipNotEqual {
             register1: ((opcode & 0x0F00) >> 8) as usize,
@@ -31,6 +29,12 @@ impl Instruction for SkipNotEqual {
                 ..cpu
             }
         }
+    }
+}
+
+impl fmt::Display for SkipNotEqual {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "SNE V{:X}, V{:X}", self.register1, self.register2)
     }
 }
 

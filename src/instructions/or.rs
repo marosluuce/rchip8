@@ -1,17 +1,15 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct Or {
     register1: usize,
     register2: usize,
 }
 
-impl Op for Or {
-    const MASK: u16 = 0x8FF1;
-}
-
 impl Instruction for Or {
+    const MASK: u16 = 0x8FF1;
+
     fn new(opcode: u16) -> Or {
         Or {
             register1: ((opcode & 0x0F00) >> 8) as usize,
@@ -29,6 +27,12 @@ impl Instruction for Or {
             },
             ..cpu
         }
+    }
+}
+
+impl fmt::Display for Or {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "OR V{:X}, V{:X}", self.register1, self.register2)
     }
 }
 

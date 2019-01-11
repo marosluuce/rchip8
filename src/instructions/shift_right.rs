@@ -1,16 +1,14 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct ShiftRight {
     register: usize,
 }
 
-impl Op for ShiftRight {
-    const MASK: u16 = 0x8FF6;
-}
-
 impl Instruction for ShiftRight {
+    const MASK: u16 = 0x8FF6;
+
     fn new(opcode: u16) -> ShiftRight {
         ShiftRight {
             register: ((opcode & 0x0F00) >> 8) as usize,
@@ -28,6 +26,12 @@ impl Instruction for ShiftRight {
             },
             ..cpu
         }
+    }
+}
+
+impl fmt::Display for ShiftRight {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "SHR V{:X}", self.register)
     }
 }
 

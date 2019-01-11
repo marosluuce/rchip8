@@ -1,17 +1,15 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct Subtract {
     register1: usize,
     register2: usize,
 }
 
-impl Op for Subtract {
-    const MASK: u16 = 0x8FF5;
-}
-
 impl Instruction for Subtract {
+    const MASK: u16 = 0x8FF5;
+
     fn new(opcode: u16) -> Subtract {
         Subtract {
             register1: ((opcode & 0x0F00) >> 8) as usize,
@@ -35,6 +33,12 @@ impl Instruction for Subtract {
             },
             ..cpu
         }
+    }
+}
+
+impl fmt::Display for Subtract {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "SUB V{:X}, V{:X}", self.register1, self.register2)
     }
 }
 

@@ -1,16 +1,14 @@
 use cpu::Cpu;
 use instructions::instruction::Instruction;
-use instructions::op::Op;
+use std::fmt;
 
 struct ReadDelayTimer {
     register: usize,
 }
 
-impl Op for ReadDelayTimer {
-    const MASK: u16 = 0xFF07;
-}
-
 impl Instruction for ReadDelayTimer {
+    const MASK: u16 = 0xFF07;
+
     fn new(opcode: u16) -> ReadDelayTimer {
         ReadDelayTimer {
             register: ((opcode & 0x0F00) >> 8) as usize,
@@ -27,6 +25,12 @@ impl Instruction for ReadDelayTimer {
             },
             ..cpu
         }
+    }
+}
+
+impl fmt::Display for ReadDelayTimer {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "LD DT, V{:X}", self.register)
     }
 }
 
