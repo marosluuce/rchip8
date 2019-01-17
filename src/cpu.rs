@@ -1,5 +1,3 @@
-use instruction::{Instruction, Name};
-
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Cpu {
     pub registers: [u8; 16],
@@ -21,36 +19,6 @@ impl Cpu {
             sp: 0,
             delay_timer: 0,
             sound_timer: 0,
-        }
-    }
-
-    pub fn execute(&self, opcode: u16) -> Cpu {
-        match Instruction::new(opcode) {
-            Instruction {
-                name: Name::SetI,
-                args: Some(args),
-                ..
-            } => Cpu {
-                i: args[0],
-                ..*self
-            },
-            Instruction {
-                name: Name::JumpAbsolute,
-                args: Some(args),
-                ..
-            } => Cpu {
-                pc: args[0],
-                ..*self
-            },
-            Instruction {
-                name: Name::SkipEqualAbsolute,
-                args: Some(_args),
-                ..
-            } => Cpu {
-                pc: self.pc + 2,
-                ..*self
-            },
-            _ => panic!("Unknown instruction"),
         }
     }
 }

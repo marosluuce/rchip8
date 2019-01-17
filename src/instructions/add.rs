@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct Add {
+pub struct Add {
     register1: usize,
     register2: usize,
 }

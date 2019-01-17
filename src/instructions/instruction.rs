@@ -1,6 +1,7 @@
 use cpu::Cpu;
+use std::fmt;
 
-pub trait Instruction {
+pub trait Instruction: fmt::Display {
     const MASK: u16;
 
     fn matches(opcode: u16) -> bool {
