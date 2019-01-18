@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct SkipKeyPressed {
+pub struct SkipKeyPressed {
     register: usize,
 }
 
@@ -24,15 +24,4 @@ impl fmt::Display for SkipKeyPressed {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "SKP V{:X}", self.register)
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn skips_when_key_pressed() {}
-
-    #[test]
-    fn does_not_skip_when_key_unpressed() {}
 }

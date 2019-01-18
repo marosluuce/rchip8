@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct Subtract {
+pub struct Subtract {
     register1: usize,
     register2: usize,
 }
@@ -18,21 +18,13 @@ impl Instruction for Subtract {
     }
 
     fn execute(&self, cpu: Cpu) -> Cpu {
-        Cpu {
-            pc: cpu.pc + 1,
-            registers: {
-                let mut registers = cpu.registers;
-                if registers[self.register1] > registers[self.register2] {
-                    registers[0xF] = 1;
-                } else {
-                    registers[0xF] = 0;
-                }
-                registers[self.register1] =
-                    registers[self.register1].wrapping_sub(registers[self.register2]);
-                registers
-            },
-            ..cpu
-        }
+        cpu.update_register(0xF, |_| {
+            (cpu.registers[self.register1] > cpu.registers[self.register2]) as u8
+        })
+        .update_register(self.register1, |x| {
+            x.wrapping_sub(cpu.registers[self.register2])
+        })
+        .increment_pc()
     }
 }
 
@@ -51,27 +43,19 @@ mod tests {
         let instruction = Subtract::new(0x8245);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[2] = 2;
-                registers[4] = 2;
-                registers[0xF] = 5;
-                registers
-            },
             ..Cpu::new()
-        };
+        }
+        .set_register(2, 2)
+        .set_register(4, 2)
+        .set_register(0xF, 5);
 
         assert_eq!(
             Cpu {
-                pc: 5,
-                registers: {
-                    let mut registers = [0; 16];
-                    registers[2] = 0;
-                    registers[4] = 2;
-                    registers[0xF] = 0;
-                    registers
-                },
+                pc: 6,
                 ..cpu
+                    .set_register(2, 0)
+                    .set_register(4, 2)
+                    .set_register(0xF, 0)
             },
             instruction.execute(cpu)
         );
@@ -82,26 +66,18 @@ mod tests {
         let instruction = Subtract::new(0x8245);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[2] = 5;
-                registers[4] = 3;
-                registers
-            },
             ..Cpu::new()
-        };
+        }
+        .set_register(2, 5)
+        .set_register(4, 3);
 
         assert_eq!(
             Cpu {
-                pc: 5,
-                registers: {
-                    let mut registers = [0; 16];
-                    registers[2] = 2;
-                    registers[4] = 3;
-                    registers[0xF] = 1;
-                    registers
-                },
+                pc: 6,
                 ..cpu
+                    .set_register(2, 2)
+                    .set_register(4, 3)
+                    .set_register(0xF, 1)
             },
             instruction.execute(cpu)
         );

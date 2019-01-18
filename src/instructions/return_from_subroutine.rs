@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct ReturnFromSubroutine;
+pub struct ReturnFromSubroutine;
 
 impl Instruction for ReturnFromSubroutine {
     const MASK: u16 = 0x00EE;

@@ -5,7 +5,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct Random {
+pub struct Random {
     register: usize,
     value: u16,
     fixed_value: Option<u16>,
@@ -29,15 +29,8 @@ impl Instruction for Random {
     }
 
     fn execute(&self, cpu: Cpu) -> Cpu {
-        Cpu {
-            pc: cpu.pc + 1,
-            registers: {
-                let mut registers = cpu.registers;
-                registers[self.register] = self.get_value();
-                registers
-            },
-            ..cpu
-        }
+        cpu.set_register(self.register, self.get_value())
+            .increment_pc()
     }
 }
 
@@ -69,13 +62,8 @@ mod tests {
 
         assert_eq!(
             Cpu {
-                pc: 5,
-                registers: {
-                    let mut registers = [0; 16];
-                    registers[0xA] = 0x02;
-                    registers
-                },
-                ..cpu
+                pc: 6,
+                ..cpu.set_register(0xA, 0x02)
             },
             instruction.execute(cpu)
         );

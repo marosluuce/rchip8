@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct Or {
+pub struct Or {
     register1: usize,
     register2: usize,
 }
@@ -18,15 +18,8 @@ impl Instruction for Or {
     }
 
     fn execute(&self, cpu: Cpu) -> Cpu {
-        Cpu {
-            pc: cpu.pc + 1,
-            registers: {
-                let mut registers = cpu.registers;
-                registers[self.register1] |= registers[self.register2];
-                registers
-            },
-            ..cpu
-        }
+        cpu.update_register(self.register1, |x| x | cpu.registers[self.register2])
+            .increment_pc()
     }
 }
 
@@ -45,25 +38,13 @@ mod tests {
         let instruction = Or::new(0x8281);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[2] = 0x04;
-                registers[8] = 0xFF;
-                registers
-            },
-            ..Cpu::new()
+            ..Cpu::new().set_register(2, 0x04).set_register(8, 0xFF)
         };
 
         assert_eq!(
             Cpu {
-                pc: 5,
-                registers: {
-                    let mut registers = [0; 16];
-                    registers[2] = 0xFF;
-                    registers[8] = 0xFF;
-                    registers
-                },
-                ..cpu
+                pc: 6,
+                ..Cpu::new().set_register(2, 0xFF).set_register(8, 0xFF)
             },
             instruction.execute(cpu)
         );

@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct SetSoundTimer {
+pub struct SetSoundTimer {
     register: usize,
 }
 
@@ -24,9 +24,4 @@ impl fmt::Display for SetSoundTimer {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "LD ST, V{:X}", self.register)
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
 }

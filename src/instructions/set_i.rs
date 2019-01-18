@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct SetI {
+pub struct SetI {
     address: u16,
 }
 

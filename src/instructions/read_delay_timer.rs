@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct ReadDelayTimer {
+pub struct ReadDelayTimer {
     register: usize,
 }
 
@@ -16,15 +16,8 @@ impl Instruction for ReadDelayTimer {
     }
 
     fn execute(&self, cpu: Cpu) -> Cpu {
-        Cpu {
-            pc: cpu.pc + 1,
-            registers: {
-                let mut registers = cpu.registers;
-                registers[self.register] = cpu.delay_timer;
-                registers
-            },
-            ..cpu
-        }
+        cpu.set_register(self.register, cpu.delay_timer)
+            .increment_pc()
     }
 }
 
@@ -43,19 +36,14 @@ mod tests {
         let instruction = ReadDelayTimer::new(0xFD07);
         let cpu = Cpu {
             pc: 4,
-            delay_timer: 0x1111,
+            delay_timer: 0x11,
             ..Cpu::new()
         };
 
         assert_eq!(
             Cpu {
-                pc: 5,
-                registers: {
-                    let mut registers = [0; 16];
-                    registers[0xD] = 0x11;
-                    registers
-                },
-                ..cpu
+                pc: 6,
+                ..cpu.set_register(0xD, 0x11)
             },
             instruction.execute(cpu)
         );

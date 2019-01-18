@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct Sprite {
+pub struct Sprite {
     register1: usize,
     register2: usize,
     nibble: u8,
@@ -32,21 +32,4 @@ impl fmt::Display for Sprite {
             self.register1, self.register2, self.nibble
         )
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn draws_a_sprite() {}
-
-    #[test]
-    fn draw_a_sprite_wrapping_vertically() {}
-
-    #[test]
-    fn draw_a_sprite_wrapping_horizontally() {}
-
-    #[test]
-    fn draw_a_sprite_colliding() {}
 }

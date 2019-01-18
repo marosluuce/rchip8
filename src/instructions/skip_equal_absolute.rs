@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct SkipEqualsAbsolute {
+pub struct SkipEqualsAbsolute {
     register: usize,
     value: u8,
 }
@@ -19,15 +19,9 @@ impl Instruction for SkipEqualsAbsolute {
 
     fn execute(&self, cpu: Cpu) -> Cpu {
         if cpu.registers[self.register] == self.value {
-            Cpu {
-                pc: cpu.pc + 2,
-                ..cpu
-            }
+            cpu.increment_pc().increment_pc()
         } else {
-            Cpu {
-                pc: cpu.pc + 1,
-                ..cpu
-            }
+            cpu.increment_pc()
         }
     }
 }
@@ -47,22 +41,11 @@ mod tests {
         let instruction = SkipEqualsAbsolute::new(0x3204);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[2] = 0x04;
-                registers
-            },
             ..Cpu::new()
-        };
+        }
+        .set_register(2, 4);
 
-        assert_eq!(
-            Cpu {
-                pc: 6,
-                sp: 0,
-                ..cpu
-            },
-            instruction.execute(cpu)
-        );
+        assert_eq!(Cpu { pc: 8, ..cpu }, instruction.execute(cpu));
     }
 
     #[test]
@@ -73,6 +56,6 @@ mod tests {
             ..Cpu::new()
         };
 
-        assert_eq!(Cpu { pc: 5, ..cpu }, instruction.execute(cpu));
+        assert_eq!(Cpu { pc: 6, ..cpu }, instruction.execute(cpu));
     }
 }

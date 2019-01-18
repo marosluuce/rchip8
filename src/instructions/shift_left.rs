@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct ShiftLeft {
+pub struct ShiftLeft {
     register: usize,
 }
 
@@ -16,16 +16,9 @@ impl Instruction for ShiftLeft {
     }
 
     fn execute(&self, cpu: Cpu) -> Cpu {
-        Cpu {
-            pc: cpu.pc + 1,
-            registers: {
-                let mut registers = cpu.registers;
-                registers[0xF] = registers[self.register] & 1;
-                registers[self.register] *= 2;
-                registers
-            },
-            ..cpu
-        }
+        cpu.set_register(0xF, cpu.registers[self.register] & 1)
+            .update_register(self.register, |x| x * 2)
+            .increment_pc()
     }
 }
 
@@ -44,24 +37,14 @@ mod tests {
         let instruction = ShiftLeft::new(0x873E);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[7] = 33;
-                registers
-            },
             ..Cpu::new()
-        };
+        }
+        .set_register(7, 33);
 
         assert_eq!(
             Cpu {
-                pc: 5,
-                registers: {
-                    let mut registers = [0; 16];
-                    registers[7] = 66;
-                    registers[0xF] = 1;
-                    registers
-                },
-                ..cpu
+                pc: 6,
+                ..cpu.set_register(7, 66).set_register(0xF, 1)
             },
             instruction.execute(cpu)
         );
@@ -72,24 +55,14 @@ mod tests {
         let instruction = ShiftLeft::new(0x873E);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[7] = 34;
-                registers
-            },
             ..Cpu::new()
-        };
+        }
+        .set_register(7, 34);
 
         assert_eq!(
             Cpu {
-                pc: 5,
-                registers: {
-                    let mut registers = [0; 16];
-                    registers[7] = 68;
-                    registers[0xF] = 0;
-                    registers
-                },
-                ..cpu
+                pc: 6,
+                ..cpu.set_register(7, 68).set_register(0xF, 0)
             },
             instruction.execute(cpu)
         );

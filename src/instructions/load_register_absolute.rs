@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct LoadRegisterAbsolute {
+pub struct LoadRegisterAbsolute {
     register: usize,
     value: u8,
 }
@@ -18,15 +18,7 @@ impl Instruction for LoadRegisterAbsolute {
     }
 
     fn execute(&self, cpu: Cpu) -> Cpu {
-        Cpu {
-            registers: {
-                let mut registers = cpu.registers;
-                registers[self.register] = self.value;
-                registers
-            },
-            pc: cpu.pc + 2,
-            ..cpu
-        }
+        cpu.set_register(self.register, self.value).increment_pc()
     }
 }
 
@@ -51,12 +43,7 @@ mod tests {
         assert_eq!(
             Cpu {
                 pc: 6,
-                registers: {
-                    let mut registers = [0; 16];
-                    registers[6] = 0x72;
-                    registers
-                },
-                ..cpu
+                ..cpu.set_register(6, 0x72)
             },
             instruction.execute(cpu)
         );

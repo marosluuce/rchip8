@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct LoadIntoRegisters {
+pub struct LoadIntoRegisters {
     register: usize,
 }
 
@@ -16,10 +16,7 @@ impl Instruction for LoadIntoRegisters {
     }
 
     fn execute(&self, cpu: Cpu) -> Cpu {
-        Cpu {
-            pc: cpu.pc + 1,
-            ..cpu
-        }
+        cpu
     }
 }
 
@@ -27,10 +24,4 @@ impl fmt::Display for LoadIntoRegisters {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "LD V{:X}, [I]", self.register)
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
 }

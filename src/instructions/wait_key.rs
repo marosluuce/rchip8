@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct WaitKey {
+pub struct WaitKey {
     register: usize,
 }
 
@@ -24,12 +24,4 @@ impl fmt::Display for WaitKey {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "LD V{:X}, K", self.register)
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn reads_a_key_press_into_register() {}
 }

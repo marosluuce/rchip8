@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct SetDelayTimer {
+pub struct SetDelayTimer {
     register: usize,
 }
 
@@ -24,10 +24,4 @@ impl fmt::Display for SetDelayTimer {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "LD DT, V{:X}", self.register)
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
 }

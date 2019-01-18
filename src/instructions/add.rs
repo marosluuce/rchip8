@@ -18,23 +18,12 @@ impl Instruction for Add {
     }
 
     fn execute(&self, cpu: Cpu) -> Cpu {
-        Cpu {
-            pc: cpu.pc + 1,
-            registers: {
-                let mut registers = cpu.registers;
-                let (value, overflow) =
-                    registers[self.register1].overflowing_add(registers[self.register2]);
+        let (value, overflow) =
+            cpu.registers[self.register1].overflowing_add(cpu.registers[self.register2]);
 
-                registers[self.register1] = value;
-                if overflow {
-                    registers[0xF] = 1;
-                } else {
-                    registers[0xF] = 0;
-                }
-                registers
-            },
-            ..cpu
-        }
+        cpu.set_register(self.register1, value)
+            .set_register(0xF, overflow as u8)
+            .increment_pc()
     }
 }
 
@@ -53,27 +42,19 @@ mod tests {
         let instruction = Add::new(0x8244);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[2] = 2;
-                registers[4] = 2;
-                registers[0xF] = 5;
-                registers
-            },
             ..Cpu::new()
+                .set_register(2, 2)
+                .set_register(4, 2)
+                .set_register(0xF, 5)
         };
 
         assert_eq!(
             Cpu {
-                pc: 5,
-                registers: {
-                    let mut registers = [0; 16];
-                    registers[2] = 4;
-                    registers[4] = 2;
-                    registers[0xF] = 0;
-                    registers
-                },
-                ..cpu
+                pc: 6,
+                ..Cpu::new()
+                    .set_register(2, 4)
+                    .set_register(4, 2)
+                    .set_register(0xF, 0)
             },
             instruction.execute(cpu)
         );
@@ -84,26 +65,16 @@ mod tests {
         let instruction = Add::new(0x8244);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[2] = 2;
-                registers[4] = 0xFF;
-                registers
-            },
-            ..Cpu::new()
+            ..Cpu::new().set_register(2, 2).set_register(4, 0xFF)
         };
 
         assert_eq!(
             Cpu {
-                pc: 5,
-                registers: {
-                    let mut registers = [0; 16];
-                    registers[2] = 1;
-                    registers[4] = 0xFF;
-                    registers[0xF] = 1;
-                    registers
-                },
-                ..cpu
+                pc: 6,
+                ..Cpu::new()
+                    .set_register(2, 1)
+                    .set_register(4, 0xFF)
+                    .set_register(0xF, 1)
             },
             instruction.execute(cpu)
         );

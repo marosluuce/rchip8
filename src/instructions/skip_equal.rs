@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct SkipEqual {
+pub struct SkipEqual {
     register1: usize,
     register2: usize,
 }
@@ -19,15 +19,9 @@ impl Instruction for SkipEqual {
 
     fn execute(&self, cpu: Cpu) -> Cpu {
         if cpu.registers[self.register1] == cpu.registers[self.register2] {
-            Cpu {
-                pc: cpu.pc + 2,
-                ..cpu
-            }
+            cpu.increment_pc().increment_pc()
         } else {
-            Cpu {
-                pc: cpu.pc + 1,
-                ..cpu
-            }
+            cpu.increment_pc()
         }
     }
 }
@@ -47,18 +41,14 @@ mod tests {
         let instruction = SkipEqual::new(0x5280);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[2] = 0x04;
-                registers[8] = 0x04;
-                registers
-            },
             ..Cpu::new()
-        };
+        }
+        .set_register(2, 4)
+        .set_register(8, 4);
 
         assert_eq!(
             Cpu {
-                pc: 6,
+                pc: 8,
                 sp: 0,
                 ..cpu
             },
@@ -71,15 +61,11 @@ mod tests {
         let instruction = SkipEqual::new(0x5260);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[2] = 0x04;
-                registers[6] = 0x05;
-                registers
-            },
             ..Cpu::new()
-        };
+        }
+        .set_register(2, 4)
+        .set_register(6, 5);
 
-        assert_eq!(Cpu { pc: 5, ..cpu }, instruction.execute(cpu));
+        assert_eq!(Cpu { pc: 6, ..cpu }, instruction.execute(cpu));
     }
 }

@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct SkipNotEqual {
+pub struct SkipNotEqual {
     register1: usize,
     register2: usize,
 }
@@ -19,15 +19,9 @@ impl Instruction for SkipNotEqual {
 
     fn execute(&self, cpu: Cpu) -> Cpu {
         if cpu.registers[self.register1] == cpu.registers[self.register2] {
-            Cpu {
-                pc: cpu.pc + 1,
-                ..cpu
-            }
+            cpu.increment_pc()
         } else {
-            Cpu {
-                pc: cpu.pc + 2,
-                ..cpu
-            }
+            cpu.increment_pc().increment_pc()
         }
     }
 }
@@ -47,23 +41,12 @@ mod tests {
         let instruction = SkipNotEqual::new(0x9280);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[2] = 0;
-                registers[8] = 1;
-                registers
-            },
             ..Cpu::new()
-        };
+        }
+        .set_register(2, 0)
+        .set_register(8, 1);
 
-        assert_eq!(
-            Cpu {
-                pc: 6,
-                sp: 0,
-                ..cpu
-            },
-            instruction.execute(cpu)
-        );
+        assert_eq!(Cpu { pc: 8, ..cpu }, instruction.execute(cpu));
     }
 
     #[test]
@@ -71,15 +54,11 @@ mod tests {
         let instruction = SkipNotEqual::new(0x9260);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[2] = 1;
-                registers[6] = 1;
-                registers
-            },
             ..Cpu::new()
-        };
+        }
+        .set_register(2, 1)
+        .set_register(6, 1);
 
-        assert_eq!(Cpu { pc: 5, ..cpu }, instruction.execute(cpu));
+        assert_eq!(Cpu { pc: 6, ..cpu }, instruction.execute(cpu));
     }
 }

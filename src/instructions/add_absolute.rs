@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct AddAbsolute {
+pub struct AddAbsolute {
     register: usize,
     value: u8,
 }
@@ -18,15 +18,8 @@ impl Instruction for AddAbsolute {
     }
 
     fn execute(&self, cpu: Cpu) -> Cpu {
-        Cpu {
-            pc: cpu.pc + 1,
-            registers: {
-                let mut registers = cpu.registers;
-                registers[self.register] += self.value;
-                registers
-            },
-            ..cpu
-        }
+        cpu.update_register(self.register, |x| x + self.value)
+            .increment_pc()
     }
 }
 
@@ -45,23 +38,13 @@ mod tests {
         let instruction = AddAbsolute::new(0x72F0);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[2] = 0x04;
-                registers
-            },
-            ..Cpu::new()
+            ..Cpu::new().set_register(2, 4)
         };
 
         assert_eq!(
             Cpu {
-                pc: 5,
-                registers: {
-                    let mut registers = [0; 16];
-                    registers[2] = 0xF4;
-                    registers
-                },
-                ..cpu
+                pc: 6,
+                ..cpu.set_register(2, 0xF4)
             },
             instruction.execute(cpu)
         );

@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct ClearScreen;
+pub struct ClearScreen;
 
 impl Instruction for ClearScreen {
     const MASK: u16 = 0x00E0;

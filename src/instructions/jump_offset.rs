@@ -2,7 +2,7 @@ use cpu::Cpu;
 use instructions::instruction::Instruction;
 use std::fmt;
 
-struct JumpOffset {
+pub struct JumpOffset {
     address: u16,
 }
 
@@ -38,13 +38,9 @@ mod tests {
         let instruction = JumpOffset::new(0xB122);
         let cpu = Cpu {
             pc: 4,
-            registers: {
-                let mut registers = [0; 16];
-                registers[0] = 0x04;
-                registers
-            },
             ..Cpu::new()
-        };
+        }
+        .set_register(0, 4);
 
         assert_eq!(Cpu { pc: 0x126, ..cpu }, instruction.execute(cpu));
     }
